@@ -4,53 +4,41 @@
 <meta charset="UTF-8">
 <title>BTD6 Editor</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
-<style>
-  body { font-family: sans-serif; padding: 20px; max-width: 600px; }
-  h2 { margin: 20px 0 8px; }
-  .field { margin-bottom: 8px; }
-  .field label { display: inline-block; width: 240px; }
-  .field input { width: 160px; }
-  .warn { color: orange; font-size: 13px; }
-  #status { margin: 8px 0; font-size: 13px; }
-  #editor { display: none; }
-  button { margin-right: 8px; margin-top: 16px; }
-</style>
 </head>
 <body>
 
 <h1>BTD6 Save Editor</h1>
-<p>Pick your Profile.Save file to get started.</p>
-
+<p>Select your Profile.Save file.</p>
 <input type="file" id="fileInput" accept=".Save,.save">
-<div id="status"></div>
+<p id="status"></p>
 
-<div id="editor">
+<div id="editor" style="display:none">
 
   <h2>Currency</h2>
-  <div class="field"><label>Monkey Money</label><input type="number" id="monkeyMoney" min="0"></div>
-  <div class="field"><label>Trophies</label><input type="number" id="trophies" min="0"></div>
-  <div class="field"><label>Knowledge Points (available)</label><input type="number" id="knowledgePoints" min="0"></div>
-  <div class="field"><label>Knowledge Points (spent total)</label><input type="number" id="totalKnowledgePointsEarned" min="0"></div>
-  <div class="field"><label>Daily Chest day index</label><input type="number" id="dailyRewardIndex" min="0"></div>
-  <div class="field"><label>Daily Chests opened</label><input type="number" id="consecutiveDailyLogin" min="0"></div>
+  <p>Monkey Money: <input type="number" id="monkeyMoney"></p>
+  <p>Trophies: <input type="number" id="trophies"></p>
+  <p>Knowledge Points (available): <input type="number" id="knowledgePoints"></p>
+  <p>Knowledge Points (spent): <input type="number" id="totalKnowledgePointsEarned"></p>
+  <p>Daily Chest day index: <input type="number" id="dailyRewardIndex"></p>
+  <p>Daily Chests opened: <input type="number" id="consecutiveDailyLogin"></p>
 
-  <h2>XP & Level</h2>
-  <p class="warn">Warning: editing XP or rank may flag your account on leaderboards.</p>
-  <div class="field"><label>XP (levels 1–155)</label><input type="number" id="xp" min="0"></div>
-  <div class="field"><label>Veteran XP (level 156+)</label><input type="number" id="veteranXp" min="0"></div>
-  <div class="field"><label>Rank (1–155)</label><input type="number" id="rank" min="1" max="155"></div>
-  <div class="field"><label>Veteran Rank (156+)</label><input type="number" id="veteranRank" min="0"></div>
+  <h2>XP and Level</h2>
+  <p>Warning: editing XP or rank may flag your account on leaderboards.</p>
+  <p>XP (levels 1-155): <input type="number" id="xp"></p>
+  <p>Veteran XP (level 156+): <input type="number" id="veteranXp"></p>
+  <p>Rank (1-155): <input type="number" id="rank" min="1" max="155"></p>
+  <p>Veteran Rank (156+): <input type="number" id="veteranRank"></p>
 
   <h2>Lifetime Stats</h2>
-  <div class="field"><label>Bloons Popped</label><input type="number" id="bloonsPopped" min="0"></div>
-  <div class="field"><label>MOABs Popped</label><input type="number" id="moabsPopped" min="0"></div>
-  <div class="field"><label>Games Played</label><input type="number" id="gamesPlayed" min="0"></div>
-  <div class="field"><label>Games Won</label><input type="number" id="gamesWon" min="0"></div>
-  <div class="field"><label>Highest Round</label><input type="number" id="highestRound" min="0"></div>
-  <div class="field"><label>Total Cash Earned</label><input type="number" id="cashEarned" min="0"></div>
-  <div class="field"><label>Powers Used</label><input type="number" id="powersUsed" min="0"></div>
-  <div class="field"><label>Insta Monkeys Used</label><input type="number" id="instasUsed" min="0"></div>
-  <div class="field"><label>Races Entered</label><input type="number" id="racesEntered" min="0"></div>
+  <p>Bloons Popped: <input type="number" id="bloonsPopped"></p>
+  <p>MOABs Popped: <input type="number" id="moabsPopped"></p>
+  <p>Games Played: <input type="number" id="gamesPlayed"></p>
+  <p>Games Won: <input type="number" id="gamesWon"></p>
+  <p>Highest Round: <input type="number" id="highestRound"></p>
+  <p>Total Cash Earned: <input type="number" id="cashEarned"></p>
+  <p>Powers Used: <input type="number" id="powersUsed"></p>
+  <p>Insta Monkeys Used: <input type="number" id="instasUsed"></p>
+  <p>Races Entered: <input type="number" id="racesEntered"></p>
 
   <br>
   <button onclick="downloadSave()">Download .Save</button>
@@ -67,11 +55,11 @@ let rawSalt   = null;
 let fileName  = 'Profile.Save';
 
 const FIELDS = [
-  'monkeyMoney', 'trophies', 'knowledgePoints', 'totalKnowledgePointsEarned',
-  'dailyRewardIndex', 'consecutiveDailyLogin',
-  'xp', 'veteranXp', 'rank', 'veteranRank',
-  'bloonsPopped', 'moabsPopped', 'gamesPlayed', 'gamesWon', 'highestRound',
-  'cashEarned', 'powersUsed', 'instasUsed', 'racesEntered'
+  'monkeyMoney','trophies','knowledgePoints','totalKnowledgePointsEarned',
+  'dailyRewardIndex','consecutiveDailyLogin',
+  'xp','veteranXp','rank','veteranRank',
+  'bloonsPopped','moabsPopped','gamesPlayed','gamesWon','highestRound',
+  'cashEarned','powersUsed','instasUsed','racesEntered'
 ];
 
 async function deriveKeyIV(salt) {
@@ -81,25 +69,25 @@ async function deriveKeyIV(salt) {
 }
 
 async function decryptSave(buffer) {
-  const b       = new Uint8Array(buffer);
-  rawHeader     = b.slice(0, 44);
-  rawPwdIdx     = b.slice(44, 52);
-  rawSalt       = b.slice(52, 76);
-  const enc     = b.slice(76);
+  const b   = new Uint8Array(buffer);
+  rawHeader = b.slice(0, 44);
+  rawPwdIdx = b.slice(44, 52);
+  rawSalt   = b.slice(52, 76);
+  const enc = b.slice(76);
   const { iv, key } = await deriveKeyIV(rawSalt);
-  const aesKey  = await crypto.subtle.importKey('raw', key, { name:'AES-CBC' }, false, ['decrypt']);
-  const dec     = new Uint8Array(await crypto.subtle.decrypt({ name:'AES-CBC', iv }, aesKey, enc));
+  const aesKey = await crypto.subtle.importKey('raw', key, { name:'AES-CBC' }, false, ['decrypt']);
+  const dec    = new Uint8Array(await crypto.subtle.decrypt({ name:'AES-CBC', iv }, aesKey, enc));
   return JSON.parse(new TextDecoder().decode(pako.inflate(dec)));
 }
 
 async function encryptSave(obj) {
   const json       = new TextEncoder().encode(JSON.stringify(obj));
-  const compressed = pako.deflate(json, { level: 6 });
+  const compressed = pako.deflate(json, { level:6 });
   const newSalt    = crypto.getRandomValues(new Uint8Array(24));
   const { iv, key } = await deriveKeyIV(newSalt);
-  const aesKey     = await crypto.subtle.importKey('raw', key, { name:'AES-CBC' }, false, ['encrypt']);
-  const enc        = await crypto.subtle.encrypt({ name:'AES-CBC', iv }, aesKey, compressed);
-  const out        = new Uint8Array(44 + 8 + 24 + enc.byteLength);
+  const aesKey = await crypto.subtle.importKey('raw', key, { name:'AES-CBC' }, false, ['encrypt']);
+  const enc    = await crypto.subtle.encrypt({ name:'AES-CBC', iv }, aesKey, compressed);
+  const out    = new Uint8Array(44 + 8 + 24 + enc.byteLength);
   out.set(rawHeader, 0);
   out.set(rawPwdIdx, 44);
   out.set(newSalt, 52);
@@ -121,10 +109,8 @@ function populateFields() {
 function collectFields() {
   for (const key of FIELDS) {
     const el = document.getElementById(key);
-    if (!el) continue;
-    const val = el.value.trim();
-    if (val === '') continue;
-    profile[key] = typeof profile[key] === 'number' ? Number(val) : val;
+    if (!el || el.value.trim() === '') continue;
+    profile[key] = typeof profile[key] === 'number' ? Number(el.value) : el.value;
   }
 }
 
@@ -139,7 +125,7 @@ async function downloadSave() {
   setStatus('Encrypting...');
   try {
     const bytes = await encryptSave(profile);
-    dl(new Blob([bytes], { type: 'application/octet-stream' }), fileName);
+    dl(new Blob([bytes], { type:'application/octet-stream' }), fileName);
     setStatus('Done.');
   } catch(e) {
     setStatus('Error: ' + e.message);
@@ -148,8 +134,8 @@ async function downloadSave() {
 
 function downloadJSON() {
   collectFields();
-  dl(new Blob([JSON.stringify(profile, null, 2)], { type: 'application/json' }),
-     fileName.replace(/\.Save$/i, '') + '_decrypted.json');
+  dl(new Blob([JSON.stringify(profile, null, 2)], { type:'application/json' }),
+    fileName.replace(/\.Save$/i, '') + '_decrypted.json');
 }
 
 function reset() {
@@ -161,7 +147,7 @@ function reset() {
 
 async function loadFile(file) {
   if (file.name.toLowerCase() !== 'profile.save') {
-    setStatus('That doesn\'t look like a Profile.Save file.');
+    setStatus('That does not look like a Profile.Save file.');
     document.getElementById('fileInput').value = '';
     return;
   }
@@ -173,7 +159,7 @@ async function loadFile(file) {
     populateFields();
     setStatus('Loaded.');
   } catch(e) {
-    setStatus('Failed to decrypt: ' + e.message);
+    setStatus('Failed: ' + e.message);
   }
 }
 
