@@ -2,157 +2,60 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>BTD6 Currency & XP Editor</title>
+<title>BTD6 Editor</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
 <style>
-  body { font-family: monospace; background: #1e1e1e; color: #d4d4d4; padding: 20px; max-width: 600px; margin: 0 auto; }
-  h1 { color: #f0c040; font-size: 18px; margin-bottom: 4px; }
-  h2 { color: #9cdcfe; font-size: 13px; margin: 20px 0 8px; border-bottom: 1px solid #333; padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
-  p { font-size: 12px; color: #888; margin-bottom: 12px; }
-  .warn { background: #3a2a00; border: 1px solid #6a5000; border-radius: 4px; padding: 6px 10px; font-size: 11px; color: #f0c040; margin-bottom: 10px; }
-  .field { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .field label { font-size: 12px; color: #888; min-width: 220px; flex-shrink: 0; }
-  .field input { background: #2d2d2d; border: 1px solid #444; border-radius: 4px; color: #d4d4d4; font-family: monospace; font-size: 13px; padding: 5px 8px; width: 180px; }
-  .field input:focus { outline: none; border-color: #f0c040; }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
-  #status { font-size: 12px; padding: 8px 12px; border-radius: 4px; margin: 8px 0; display: none; }
-  #status.info { display:block; background:#1a3a5c; color:#9cdcfe; }
-  #status.ok   { display:block; background:#1a3a2a; color:#4ec994; }
-  #status.err  { display:block; background:#3a1a1a; color:#f47474; }
-  #uploadArea { border: 2px dashed #444; border-radius: 6px; padding: 28px; text-align: center; margin: 14px 0; cursor: pointer; }
-  #uploadArea:hover { border-color: #f0c040; }
-  #uploadArea p { margin-bottom: 10px; }
-  #fileInput { display: none; }
+  body { font-family: sans-serif; padding: 20px; max-width: 600px; }
+  h2 { margin: 20px 0 8px; }
+  .field { margin-bottom: 8px; }
+  .field label { display: inline-block; width: 240px; }
+  .field input { width: 160px; }
+  .warn { color: orange; font-size: 13px; }
+  #status { margin: 8px 0; font-size: 13px; }
   #editor { display: none; }
-  button { font-family: monospace; font-size: 12px; padding: 7px 16px; border: none; border-radius: 4px; cursor: pointer; margin-right: 8px; }
-  button:hover { opacity: 0.85; }
-  .btn-choose { background: #f0c040; color: #1e1e1e; font-weight: bold; }
-  .btn-save   { background: #2a7a4a; color: #fff; }
-  .btn-json   { background: #2a5a8a; color: #fff; }
-  .btn-reset  { background: #3a3a3a; color: #888; }
-  .actions { margin-top: 16px; padding-top: 14px; border-top: 1px solid #333; }
+  button { margin-right: 8px; margin-top: 16px; }
 </style>
 </head>
 <body>
 
-<h1>BTD6 Currency &amp; XP Editor</h1>
-<p>Load your Profile.Save, edit, and download.</p>
+<h1>BTD6 Save Editor</h1>
+<p>Pick your Profile.Save file to get started.</p>
 
-<div id="uploadArea" onclick="document.getElementById('fileInput').click()">
-  <p>Drop your Profile.Save here, or click to browse</p>
-  <button class="btn-choose" onclick="event.stopPropagation(); document.getElementById('fileInput').click()">Choose File</button>
-  <input type="file" id="fileInput" accept=".Save,.save">
-</div>
+<input type="file" id="fileInput" accept=".Save,.save">
 <div id="status"></div>
 
 <div id="editor">
 
   <h2>Currency</h2>
-  <div class="grid">
-    <div>
-      <div class="field">
-        <label>Monkey Money</label>
-        <input type="number" id="monkeyMoney" min="0">
-      </div>
-      <div class="field">
-        <label>Trophies</label>
-        <input type="number" id="trophies" min="0">
-      </div>
-      <div class="field">
-        <label>Knowledge Points (available)</label>
-        <input type="number" id="knowledgePoints" min="0">
-      </div>
-      <div class="field">
-        <label>Total Knowledge Points spent</label>
-        <input type="number" id="totalKnowledgePointsEarned" min="0">
-      </div>
-    </div>
-    <div>
-      <div class="field">
-        <label>Daily Chest day index</label>
-        <input type="number" id="dailyRewardIndex" min="0">
-      </div>
-      <div class="field">
-        <label>Daily Chests opened (total)</label>
-        <input type="number" id="consecutiveDailyLogin" min="0">
-      </div>
-    </div>
-  </div>
+  <div class="field"><label>Monkey Money</label><input type="number" id="monkeyMoney" min="0"></div>
+  <div class="field"><label>Trophies</label><input type="number" id="trophies" min="0"></div>
+  <div class="field"><label>Knowledge Points (available)</label><input type="number" id="knowledgePoints" min="0"></div>
+  <div class="field"><label>Knowledge Points (spent total)</label><input type="number" id="totalKnowledgePointsEarned" min="0"></div>
+  <div class="field"><label>Daily Chest day index</label><input type="number" id="dailyRewardIndex" min="0"></div>
+  <div class="field"><label>Daily Chests opened</label><input type="number" id="consecutiveDailyLogin" min="0"></div>
 
-  <h2>XP &amp; Level</h2>
-  <div class="warn">⚠ Editing XP / rank directly may flag your account on leaderboards.</div>
-  <div class="grid">
-    <div>
-      <div class="field">
-        <label>XP (levels 1–155)</label>
-        <input type="number" id="xp" min="0">
-      </div>
-      <div class="field">
-        <label>Veteran XP (level 156+)</label>
-        <input type="number" id="veteranXp" min="0">
-      </div>
-    </div>
-    <div>
-      <div class="field">
-        <label>Rank (stored level, 1–155)</label>
-        <input type="number" id="rank" min="1" max="155">
-      </div>
-      <div class="field">
-        <label>Veteran Rank (156+)</label>
-        <input type="number" id="veteranRank" min="0">
-      </div>
-    </div>
-  </div>
+  <h2>XP & Level</h2>
+  <p class="warn">Warning: editing XP or rank may flag your account on leaderboards.</p>
+  <div class="field"><label>XP (levels 1–155)</label><input type="number" id="xp" min="0"></div>
+  <div class="field"><label>Veteran XP (level 156+)</label><input type="number" id="veteranXp" min="0"></div>
+  <div class="field"><label>Rank (1–155)</label><input type="number" id="rank" min="1" max="155"></div>
+  <div class="field"><label>Veteran Rank (156+)</label><input type="number" id="veteranRank" min="0"></div>
 
   <h2>Lifetime Stats</h2>
-  <div class="grid">
-    <div>
-      <div class="field">
-        <label>Bloons Popped (total)</label>
-        <input type="number" id="bloonsPopped" min="0">
-      </div>
-      <div class="field">
-        <label>MOABs Popped</label>
-        <input type="number" id="moabsPopped" min="0">
-      </div>
-      <div class="field">
-        <label>Games Played</label>
-        <input type="number" id="gamesPlayed" min="0">
-      </div>
-      <div class="field">
-        <label>Games Won</label>
-        <input type="number" id="gamesWon" min="0">
-      </div>
-      <div class="field">
-        <label>Highest Round</label>
-        <input type="number" id="highestRound" min="0">
-      </div>
-    </div>
-    <div>
-      <div class="field">
-        <label>Total Cash Earned</label>
-        <input type="number" id="cashEarned" min="0">
-      </div>
-      <div class="field">
-        <label>Powers Used (total)</label>
-        <input type="number" id="powersUsed" min="0">
-      </div>
-      <div class="field">
-        <label>Insta Monkeys Used (total)</label>
-        <input type="number" id="instasUsed" min="0">
-      </div>
-      <div class="field">
-        <label>Races Entered</label>
-        <input type="number" id="racesEntered" min="0">
-      </div>
-    </div>
-  </div>
+  <div class="field"><label>Bloons Popped</label><input type="number" id="bloonsPopped" min="0"></div>
+  <div class="field"><label>MOABs Popped</label><input type="number" id="moabsPopped" min="0"></div>
+  <div class="field"><label>Games Played</label><input type="number" id="gamesPlayed" min="0"></div>
+  <div class="field"><label>Games Won</label><input type="number" id="gamesWon" min="0"></div>
+  <div class="field"><label>Highest Round</label><input type="number" id="highestRound" min="0"></div>
+  <div class="field"><label>Total Cash Earned</label><input type="number" id="cashEarned" min="0"></div>
+  <div class="field"><label>Powers Used</label><input type="number" id="powersUsed" min="0"></div>
+  <div class="field"><label>Insta Monkeys Used</label><input type="number" id="instasUsed" min="0"></div>
+  <div class="field"><label>Races Entered</label><input type="number" id="racesEntered" min="0"></div>
 
-  <div class="actions">
-    <button class="btn-save" onclick="downloadSave()">⬇ Download Re-encrypted .Save</button>
-    <button class="btn-json" onclick="downloadJSON()">⬇ Download Edited JSON</button>
-    <button class="btn-reset" onclick="reset()">✕ Reset</button>
-  </div>
+  <br>
+  <button onclick="downloadSave()">Download .Save</button>
+  <button onclick="downloadJSON()">Download JSON</button>
+  <button onclick="reset()">Reset</button>
 
 </div>
 
@@ -163,7 +66,6 @@ let rawPwdIdx = null;
 let rawSalt   = null;
 let fileName  = 'Profile.Save';
 
-// All the fields we want to read and write, mapped to their profile keys
 const FIELDS = [
   'monkeyMoney', 'trophies', 'knowledgePoints', 'totalKnowledgePointsEarned',
   'dailyRewardIndex', 'consecutiveDailyLogin',
@@ -171,8 +73,6 @@ const FIELDS = [
   'bloonsPopped', 'moabsPopped', 'gamesPlayed', 'gamesWon', 'highestRound',
   'cashEarned', 'powersUsed', 'instasUsed', 'racesEntered'
 ];
-
-// ── Crypto ──────────────────────────────────────────────────────────
 
 async function deriveKeyIV(salt) {
   const mat = await crypto.subtle.importKey('raw', new TextEncoder().encode('11'), 'PBKDF2', false, ['deriveBits']);
@@ -207,12 +107,8 @@ async function encryptSave(obj) {
   return out;
 }
 
-// ── UI helpers ──────────────────────────────────────────────────────
-
-function setStatus(type, msg) {
-  const el = document.getElementById('status');
-  el.className = type;
-  el.textContent = msg;
+function setStatus(msg) {
+  document.getElementById('status').textContent = msg;
 }
 
 function populateFields() {
@@ -228,34 +124,25 @@ function collectFields() {
     if (!el) continue;
     const val = el.value.trim();
     if (val === '') continue;
-    if (typeof profile[key] === 'number') {
-      profile[key] = Number(val);
-    } else {
-      profile[key] = val;
-    }
+    profile[key] = typeof profile[key] === 'number' ? Number(val) : val;
   }
 }
 
 function dl(blob, name) {
-  const a = Object.assign(document.createElement('a'), {
-    href: URL.createObjectURL(blob),
-    download: name
-  });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: name });
   a.click();
   URL.revokeObjectURL(a.href);
 }
 
-// ── Actions ─────────────────────────────────────────────────────────
-
 async function downloadSave() {
   collectFields();
-  setStatus('info', 'Re-encrypting...');
+  setStatus('Encrypting...');
   try {
     const bytes = await encryptSave(profile);
     dl(new Blob([bytes], { type: 'application/octet-stream' }), fileName);
-    setStatus('ok', 'Done. Replace your original Profile.Save with the downloaded file.');
+    setStatus('Done.');
   } catch(e) {
-    setStatus('err', 'Encryption failed: ' + e.message);
+    setStatus('Error: ' + e.message);
   }
 }
 
@@ -268,44 +155,30 @@ function downloadJSON() {
 function reset() {
   profile = rawHeader = rawPwdIdx = rawSalt = null;
   document.getElementById('editor').style.display = 'none';
-  document.getElementById('uploadArea').style.display = '';
-  document.getElementById('status').className = '';
-  document.getElementById('status').textContent = '';
   document.getElementById('fileInput').value = '';
+  setStatus('');
 }
-
-// ── File loading ─────────────────────────────────────────────────────
 
 async function loadFile(file) {
   if (file.name.toLowerCase() !== 'profile.save') {
-    setStatus('err', `Wrong file: "${file.name}". Please load your Profile.Save file.`);
+    setStatus('That doesn\'t look like a Profile.Save file.');
     document.getElementById('fileInput').value = '';
     return;
   }
   fileName = file.name;
-  setStatus('info', 'Decrypting ' + file.name + '...');
+  setStatus('Decrypting...');
   try {
     profile = await decryptSave(await file.arrayBuffer());
-    document.getElementById('uploadArea').style.display = 'none';
     document.getElementById('editor').style.display = 'block';
     populateFields();
-    setStatus('ok', 'Loaded: ' + file.name);
+    setStatus('Loaded.');
   } catch(e) {
-    setStatus('err', 'Decryption failed: ' + e.message);
+    setStatus('Failed to decrypt: ' + e.message);
   }
 }
 
 document.getElementById('fileInput').addEventListener('change', e => {
   if (e.target.files[0]) loadFile(e.target.files[0]);
-});
-
-const zone = document.getElementById('uploadArea');
-zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor = '#f0c040'; });
-zone.addEventListener('dragleave', () => { zone.style.borderColor = '#444'; });
-zone.addEventListener('drop', e => {
-  e.preventDefault();
-  zone.style.borderColor = '#444';
-  if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
 });
 </script>
 </body>
